@@ -5,6 +5,10 @@
 
     <!-- Vehicle SDK: read-only domains this app diagnoses (protectionLevel normal, no runtime dialog). -->
     <uses-permission android:name="pleos.car.permission.CAR_SAFETY" />
+    <!-- Tire/Safety SDK checks every overload's annotation, which includes PRIVATE_CAR_SAFETY. -->
+    <uses-permission android:name="pleos.car.permission.PRIVATE_CAR_SAFETY" />
+    <!-- Gear selection (GearImpl) requires CAR_DRIVE. -->
+    <uses-permission android:name="pleos.car.permission.CAR_DRIVE" />
     <uses-permission android:name="pleos.car.permission.CAR_LIGHTS" />
     <uses-permission android:name="pleos.car.permission.CAR_TIRES" />
     <uses-permission android:name="pleos.car.permission.CAR_POWERTRAIN" />

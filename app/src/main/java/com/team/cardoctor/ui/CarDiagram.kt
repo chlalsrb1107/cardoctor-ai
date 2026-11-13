@@ -157,8 +157,9 @@ private class CarLayout(val body: Rect) {
         )
 
         fun of(size: Size): CarLayout {
-            val bh = size.height * 0.92f
-            val bw = minOf(bh / 2.1f, size.width * 0.55f)
+            // Keep the car's proportions whichever side is the limit, so a narrow column never stretches it.
+            val bw = minOf(size.height * 0.92f / 2.1f, size.width * 0.66f)
+            val bh = bw * 2.1f
             val left = (size.width - bw) / 2f
             val top = (size.height - bh) / 2f
             return CarLayout(Rect(left, top, left + bw, top + bh))

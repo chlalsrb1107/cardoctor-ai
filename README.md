@@ -10,6 +10,8 @@
 | **음성 질문 "지금 가야 돼?"** | **정비소 사전 리포트(QR)** |
 | ![K](docs/renders/K_voice_answer.png) | ![I](docs/renders/I_shop_report.png) |
 
+**시연 영상 (1분 15초):** [docs/demo/cardoctor-ai_demo.mp4](docs/demo/cardoctor-ai_demo.mp4) — Pleos Connect v2.1.0 에뮬레이터에서 녹화했습니다. 전체 점검, 낮·밤 전조등, 음성 질문, 내비 안내, 빗길 타이어, 정차 상세, QR 리포트, 예측 정비, 브레이크 4등급 순서입니다.
+
 ## 실행 방법
 
 1. Android Studio(또는 JDK 17 + Android SDK 35)를 준비합니다.
