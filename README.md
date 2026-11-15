@@ -1,7 +1,36 @@
-# 카닥터 데모 (Pleos Connect)
+<div align="center">
 
-차량 경고등을 읽어 **"지금 정비소에 가야 하는지"** 를 4단계로 알려주는 데모 앱입니다.
-Pleos Vehicle SDK 2.3.2로 신호를 읽고, 규칙 기반 엔진이 고장의 기본 심각도와 주행 환경을 합쳐 등급을 정합니다.
+# 카닥터 · CarDoctor
+
+### 경고등이 켜졌을 때, 지금 정비소에 가야 할까요?
+
+차량 경고등과 주행 환경을 함께 읽어 **"지금 정비소에 가야 하는지"** 를 4단계로 알려 주는<br>
+Pleos Connect 차량용 진단 안내 앱입니다.
+
+[![Platform](https://img.shields.io/badge/Platform-Pleos%20Connect-0B1B33?style=for-the-badge)](#빠른-시작) [![Vehicle SDK](https://img.shields.io/badge/Vehicle%20SDK-2.3.2-1E6FD9?style=for-the-badge)](#동작-방식) [![Tests](https://img.shields.io/badge/Unit%20Tests-29%20passing-16A34A?style=for-the-badge)](#4-테스트-선택) [![APK](https://img.shields.io/badge/APK-release-7C3AED?style=for-the-badge)](apk/AYPI_CarDoctor_release.apk)
+
+<br>
+
+<img src="docs/screenshots/B_headlamp_night_grade3.png" alt="밤에 전조등 이상이 감지되어 3등급 즉시 정비로 판정한 카닥터 화면" width="100%">
+
+<sub>밤에 전조등 이상이 감지된 화면 — 같은 고장이 낮에는 1등급이지만, 야간 가중치가 붙어 3등급 "즉시 정비"로 판정합니다.</sub>
+
+</div>
+
+---
+
+## 왜 필요한가
+
+경고등은 무언가 이상하다는 사실만 알려 줄 뿐, **지금 어떻게 해야 하는지는 알려 주지 않습니다.**
+
+| 문제 | 내용 |
+|---|---|
+| **급한 정도를 알 수 없다** | 경고등의 의미를 알려면 설명서나 검색이 필요한데, 운전 중에는 그럴 수 없습니다. |
+| **상황에 따라 답이 다르다** | 전조등 고장은 낮에는 여유가 있지만 밤에는 바로 고쳐야 하고, 타이어 공기압 저하는 빗길에서 더 위험합니다. |
+| **정비소에서 설명하기 어렵다** | 언제, 어떤 상황에서, 어떤 경고가 떴는지 말로 전하기 쉽지 않습니다. |
+
+> 카닥터는 고장의 **기본 심각도**에 **주행 환경**(밤, 비, 고속도로, 남은 거리)을 더해 등급을 정합니다.
+> 등급은 규칙 엔진이, 설명은 AI가, 길안내는 차량 내비게이션이 맡습니다.
 
 | 낮, 전조등 이상 → 1등급 | 밤, 같은 고장 → 3등급 |
 |---|---|
@@ -11,6 +40,8 @@ Pleos Vehicle SDK 2.3.2로 신호를 읽고, 규칙 기반 엔진이 고장의 �
 |---|---|
 | ![타이어](docs/screenshots/C_tire_rain_grade3.png) | ![브레이크](docs/screenshots/D_brake_abs_grade4.png) |
 
+---
+
 ## 목차
 
 - [빠른 시작](#빠른-시작)
@@ -19,6 +50,7 @@ Pleos Vehicle SDK 2.3.2로 신호를 읽고, 규칙 기반 엔진이 고장의 �
 - [시연 순서 예시](#시연-순서-예시)
 - [시연 영상 녹화](#시연-영상-녹화)
 - [동작 방식](#동작-방식)
+- [기술 스택](#기술-스택)
 - [프로젝트 구조](#프로젝트-구조)
 - [디자인](#디자인)
 - [크레딧과 라이선스](#크레딧과-라이선스)
@@ -27,7 +59,10 @@ Pleos Vehicle SDK 2.3.2로 신호를 읽고, 규칙 기반 엔진이 고장의 �
 - [시연 안정성](#시연-안정성)
 - [보안 (API 키)](#보안-api-키)
 - [통합 기능 (회의 PRD F1~F7)](#통합-기능-회의-prd-f1f7)
+- [로드맵](#로드맵)
 - [신호 매핑표](docs/SIGNAL_MAP.md)
+
+---
 
 ## 빠른 시작
 
@@ -58,6 +93,12 @@ emulator -avd Pleos_Connect_v2_1 -no-snapshot
 ./gradlew installDebug
 ```
 
+빌드하지 않고 바로 설치하려면 저장소에 들어 있는 릴리스 APK를 씁니다.
+
+```bash
+adb install -r apk/AYPI_CarDoctor_release.apk
+```
+
 ### 3. 앱 실행
 
 에뮬레이터의 앱 목록에서 **카닥터**를 누르거나 아래 명령을 실행합니다.
@@ -77,6 +118,8 @@ adb shell am start -n com.cardoctor.demo/.MainActivity
 ```
 
 판정 엔진·음성 해석의 단위 테스트 29개를 실행합니다. 에뮬레이터 없이도 돌아갑니다.
+
+---
 
 ## 앱 사용 방법
 
@@ -111,6 +154,8 @@ adb shell am start -n com.cardoctor.demo/.MainActivity
 | 3 | 4~5점 | 즉시 정비 | 가장 가까운 정비소로 바로 가세요 |
 | 2 | 2~3점 | 목적지 후 정비 | 목적지까지는 운행할 수 있습니다. 오늘 중 점검을 권장합니다 |
 | 1 | 1점 | 여유 있게 정비 | 주말이나 다음 정기점검 때 정비소를 방문하세요 |
+
+---
 
 ## 고장 주입 방법
 
@@ -189,6 +234,8 @@ scripts\demo.cmd headlamp
 
 인자 없이 실행하면 사용법이 나옵니다. `demo.sh` 에서 `adb` 가 PATH에 없으면 `ADB=<adb 경로> scripts/demo.sh headlamp` 처럼 지정합니다.
 
+---
+
 ## 시연 순서 예시
 
 "같은 고장도 상황에 따라 답이 달라진다"를 보여주는 순서입니다.
@@ -199,6 +246,8 @@ scripts\demo.cmd headlamp
 4. 칩을 두 번 더 눌러 자동으로 되돌리고, **빗길 타이어**를 주입합니다. 와이퍼가 작동해 비로 판단되고 3등급이 됩니다.
 5. **브레이크 + ABS**를 주입합니다. 환경과 관계없이 4등급 "즉시 정차"가 나오고 화면이 점멸합니다.
 6. **모두 해제**로 정상으로 돌아옵니다.
+
+---
 
 ## 시연 영상 녹화
 
@@ -212,6 +261,8 @@ python tools/compose_demo.py <클립 폴더> <출력.mp4>
 - `record_demo.py` 는 장면마다 `sceneNN.webm` 을 만듭니다. 출력 폴더를 생략하면 `captures/demo_video/` 에 저장하고, 장면 번호를 주면 그 장면만 다시 찍습니다.
 - `compose_demo.py` 는 클립을 1080p MP4로 이어 붙이고 `tools/demo_captions.py` 의 자막을 입힙니다.
 - 녹화 전에 앱을 새로 띄우고 고장을 모두 해제한 뒤 시연 환경을 낮·맑음으로 고정합니다. 장면 구성과 대기 시간은 `record_demo.py` 안에서 고칩니다.
+
+---
 
 ## 동작 방식
 
@@ -235,6 +286,24 @@ Pleos Vehicle SDK ──▶ PleosSignalSource ──▶ FaultDetector ──▶ 
 
 규칙표는 `app/src/main/java/com/cardoctor/demo/engine/Rules.kt` 에 있습니다. `// 초안` 표시가 있는 항목은 팀 검토가 필요합니다.
 
+---
+
+## 기술 스택
+
+**App**<br>
+`Kotlin` · `Jetpack Compose` · `Android 14 (Pleos Connect v2.1)`
+
+**Vehicle & Voice**<br>
+`Pleos Vehicle SDK 2.3.2` · `TextToSpeech 3.3.1` · `SpeechToText 3.3.1` · `NaviHelper 3.0.5` · `FusedLocation 1.1.3`
+
+**Map & AI**<br>
+`Tmap API` · `MapLibre GL JS` · `OpenFreeMap` · `Gemini` · `three.js`
+
+**Demo Tools**<br>
+`Python (tkinter)` · `adb` · `ffmpeg`
+
+---
+
 ## 프로젝트 구조
 
 ```text
@@ -252,6 +321,8 @@ scripts/demo.cmd, demo.sh    명령줄 시나리오 주입
 docs/screenshots/            README 스크린샷
 ```
 
+---
+
 ## 디자인
 
 쇼룸의 차량과 앰비언트 라이트를 콘셉트로 했습니다. 피아노 블랙 배경 위에 유리 질감 패널을 얹고,
@@ -261,6 +332,8 @@ docs/screenshots/            README 스크린샷
 차량은 3D 뷰어로 표시합니다(`ui/Car3DView.kt`, `app/src/main/assets/car3d/`). 타이어·휠·전조등은 모델의 실제 메시가 빛나고,
 모델에 별도 메시가 없는 부위(와이퍼, 구동·냉각, 배터리, 실내, 조향)는 해당 위치의 발광으로 표시합니다.
 WebGL이나 모델을 불러올 수 없는 환경에서는 2D 평면도(`ui/CarDiagram.kt`)로 대체됩니다.
+
+---
 
 ## 크레딧과 라이선스
 
@@ -274,6 +347,8 @@ WebGL이나 모델을 불러올 수 없는 환경에서는 2D 평면도(`ui/CarD
 - 지도 엔진: [MapLibre GL JS](https://maplibre.org) 4.7.1, BSD-3-Clause. 앱 안(`app/src/main/assets/map/vendor/`)에 들어 있어 실행 중에 외부 코드를 받지 않습니다. 라이선스 원문은 같은 폴더의 `LICENSE.txt`.
 - 지도 데이터·타일: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, [OpenMapTiles](https://openmaptiles.org), 타일 제공 [OpenFreeMap](https://openfreemap.org). 지도 화면 아래에 출처를 표시합니다. 지도 그림(타일)과 글꼴은 인터넷에서 받으므로, 연결이 없으면 지도 대신 안내 문구가 뜨고 목록·안내 시작은 그대로 동작합니다.
 
+---
+
 ## 알려진 제약
 
 - 경고등 읽기(`Safety.getTelltalesInfo`)는 비공개 권한 `PRIVATE_CAR_SAFETY`가 필요합니다. 권한이 없으면 앱은 **공개 신호 모드**로 바뀌어 타이어·구동 배터리·전조등·와이퍼·기어 신호로 계속 진단합니다. 신호별 권한과 에뮬레이터 상태는 [docs/SIGNAL_MAP.md](docs/SIGNAL_MAP.md)에 정리했습니다.
@@ -283,6 +358,8 @@ WebGL이나 모델을 불러올 수 없는 환경에서는 2D 평면도(`ui/CarD
 - Vehicle SDK 2.3.2에는 차속(`PERF_VEHICLE_SPEED`)을 읽는 공개 메서드가 없어, 속도는 위치 신호에서 계산합니다. 터널 등 위치를 못 받는 구간에서는 기어 신호로만 판단합니다.
 - 에뮬레이터에는 마이크 입력이 없어 음성 질문은 GUI 시연 콘솔의 질문 버튼으로 시연합니다. 버튼은 실제 음성과 같은 해석·답변 경로를 탑니다.
 - 에뮬레이터 기준으로만 검증했습니다.
+
+---
 
 ## 운전 중 안전 (화면 잠금 · 음성)
 
@@ -308,11 +385,15 @@ WebGL이나 모델을 불러올 수 없는 환경에서는 2D 평면도(`ui/CarD
 
 - 답을 말하기 전에 마이크를 닫아, 앱이 자기 음성을 명령으로 알아듣지 않습니다.
 
+---
+
 ## 시연 안정성
 
 - **시연 환경 고정 (낮·맑음)**: GUI 시연 콘솔 버튼 하나로 밤·날씨를 강제로 고정하고 고속도로·장거리를 끕니다. 실시간 날씨나 시각 때문에 시연 중 등급이 바뀌지 않습니다.
 - 고장이 없어도 OVERALL 카드의 **정비소 리포트 · QR** 로 바로 들어갈 수 있습니다.
 - 앱에는 시연용 화면이 없습니다. 고장 주입과 시연값은 모두 PC의 GUI 시연 콘솔에서 합니다.
+
+---
 
 ## 보안 (API 키)
 
@@ -326,6 +407,8 @@ WebGL이나 모델을 불러올 수 없는 환경에서는 2D 평면도(`ui/CarD
   - 앱은 요청에 `X-Android-Package` · `X-Android-Cert`를 함께 보내므로, 일반 API 키로 바꾸면 Android 앱 제한을 바로 쓸 수 있습니다.
 - **Tmap**: SK open API 콘솔에서 일일 호출 한도를 낮게 두고, POI 검색 API만 켭니다. 앱은 1km 이상 이동했을 때만 다시 검색합니다.
 - 실서비스라면 두 호출을 서버 프록시로 옮기고 앱에는 키를 넣지 않습니다.
+
+---
 
 ## 통합 기능 (회의 PRD F1~F7)
 
@@ -361,3 +444,29 @@ GEMINI_API_KEY=...
   ```
 - 앱이 위치 권한을 요청하면 허용합니다.
 - Pleos TTS는 v2.1 에뮬레이터에서 `HYBRID` 모드 또는 `ko` 로케일이면 소리가 나지 않습니다(`ON_DEVICE_ENGINE_ERROR`). 앱은 `ON_DEVICE` + `ko_KR` 을 씁니다.
+
+---
+
+## 로드맵
+
+- [x] 차량 신호 읽기 → 고장 판정 → 주행 환경 가중치 → 4단계 등급
+- [x] 3D 차량 화면, 3등급 이상 음성 안내, 음성 질문과 답변
+- [x] 가까운 정비소 검색, 지도 경로 미리보기, 차량 내비 길안내
+- [x] 정비소 사전 리포트 · QR
+- [ ] 실차 검증과 신호 매핑 보완
+- [ ] 규칙표의 `// 초안` 항목 검토 및 확정
+- [ ] 외부 API 호출을 서버 프록시로 이전 (앱에 키를 두지 않기)
+
+---
+
+## Contact
+
+<div align="center">
+
+**AUTONOMOUS PCC, Inc.** · (주)오토노머스피씨씨
+
+현대자동차그룹 차량용 앱 개발 공모전 출품작 · 팀 에이피(AYPI)
+
+[![GitHub](https://img.shields.io/badge/GitHub-AUTONOMOUS--PCC--Inc-0B1B33?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AUTONOMOUS-PCC-Inc)
+
+</div>
