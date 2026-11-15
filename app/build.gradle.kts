@@ -6,11 +6,15 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// API keys live in local.properties (git-ignored): TMAP_APP_KEY=..., GEMINI_API_KEY=...
-// Without them the app falls back to sample places and rule-based explanations.
+// API keys: TMAP_APP_KEY=..., GEMINI_API_KEY=...
+// api-keys.properties holds the team keys (committed to the private team repository);
+// local.properties (git-ignored) overrides them. Without keys the app falls back to sample
+// places and rule-based explanations.
 val localProps = Properties().apply {
-    val f = rootProject.file("local.properties")
-    if (f.exists()) f.inputStream().use { load(it) }
+    for (name in listOf("api-keys.properties", "local.properties")) {
+        val f = rootProject.file(name)
+        if (f.exists()) f.inputStream().use { load(it) }
+    }
 }
 fun secret(name: String) = "\"${localProps.getProperty(name, "")}\""
 

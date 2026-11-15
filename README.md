@@ -297,7 +297,8 @@ WebGL이나 모델을 불러올 수 없는 환경에서는 2D 평면도(`ui/CarD
 
 ## 보안 (API 키)
 
-- 키는 `local.properties`(git 제외)에만 두고 빌드 때 `BuildConfig`로 들어갑니다. 저장소에는 키가 없습니다.
+- 팀 키는 `api-keys.properties`에 있고 빌드 때 `BuildConfig`로 들어갑니다. 이 파일은 **비공개 팀 저장소(AUTONOMOUS-PCC-Inc)에만** 커밋합니다. 저장소를 공개하거나 외부에 올릴 때는 이 파일을 지우고 키를 새로 발급하세요.
+- 자기 키를 쓰려면 `local.properties`(git 제외)에 같은 이름으로 넣으면 그 값이 우선합니다.
 - **Gemini**: Gemini용 키는 구글 정책상 서비스 계정에 바인드되어 "Android 앱" 제한을 걸 수 없습니다. 대신 세 겹으로 피해 범위를 막았습니다.
   - API 제한: 이 키로는 Gemini API만 호출됩니다.
   - 무료 등급: 결제 수단이 없어 키가 새도 요금이 청구되지 않습니다.
@@ -322,7 +323,7 @@ WebGL이나 모델을 불러올 수 없는 환경에서는 2D 평면도(`ui/CarD
 
 ### API 키
 
-`local.properties`(git 제외)에 넣습니다. 없으면 해당 기능만 꺼지고 나머지는 동작합니다.
+팀 키가 `api-keys.properties`에 들어 있어 **받아서 바로 빌드하면 Tmap·Gemini가 연결됩니다.** 자기 키를 쓰려면 `local.properties`(git 제외)에 같은 이름으로 넣으면 그 값이 우선합니다. 키가 없으면 해당 기능만 꺼지고 나머지는 동작합니다. Gemini는 하루 300건을 팀 전체가 나눠 씁니다.
 
 ```
 TMAP_APP_KEY=...
