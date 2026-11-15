@@ -58,7 +58,9 @@ class Speaker(context: Context) {
         val p = pleos
         if (pleosReady && !pleosBroken && p != null) {
             try {
-                p.speak(text, false)
+                // isFinal = true: each call is a complete utterance. With false the service waits for
+                // more text, so the last ~2 s stay in its buffer and play in front of the next sentence.
+                p.speak(text, true)
                 engine = "Pleos TTS"
                 return
             } catch (e: Exception) {
